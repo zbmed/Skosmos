@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: zbmed/skosmos
   JENA_4_VERSION: 4.8.0
 
 jobs:
