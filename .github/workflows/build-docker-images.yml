@@ -33,7 +33,9 @@ jobs:
       - name: Build and publish the Docker images
         run:
                docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/skosmos:latest . -f dockerfiles/Dockerfile.ubuntu
+               
                docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/skosmos:latest
         
                docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/fuseki:${{ env.JENA_4_VERSION }} --build-arg JENA_VERSION=${{ env.JENA_4_VERSION }} --no-cache dockerfiles/jena-fuseki2-docker
+               
                docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/fuseki:${{ env.JENA_4_VERSION }}
