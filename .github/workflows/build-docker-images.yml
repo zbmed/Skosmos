@@ -1,0 +1,39 @@
+name: Create and publish Docker images
+
+on:
+  push:
+    branches: ['test-ci']
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  JENA_4_VERSION: 4.8.0
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish the Docker images
+        run:
+               docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/skosmos:latest . -f dockerfiles/Dockerfile.ubuntu
+               docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/skosmos:latest
+        
+               docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/fuseki:${{ env.JENA_4_VERSION }} --build-arg JENA_VERSION=${{ env.JENA_4_VERSION }} --no-cache dockerfiles/jena-fuseki2-docker
+               docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/fuseki:${{ env.JENA_4_VERSION }}
