@@ -40,6 +40,20 @@ describe('New and removed view', () => {
     // Check that concepts are in the correct language
     cy.get('#tab-changes').find('.sidebar-list li a').eq(0).invoke('text').should('contain', 'irtolöydöt')
   })
+  it('Loads concepts on scroll', () => {
+    // Go to YSO vocab home page
+    cy.visit('/yso/en/')
+    // click on changes tab
+    cy.get('#changes').click()
+    // Scroll to the bottom of sidebar list
+    cy.get('#tab-changes').find('.sidebar-list').scrollTo('bottom')
+    // Check that loading spinner exists
+    cy.get('#tab-changes .sidebar-list i.fa-spinner')
+    // Check that new concepts have been loaded
+    cy.get('#tab-changes').find('.sidebar-list li').should('have.length.gt', 200, {'timeout': 20000})
+    // Check that loading spinner does not exist
+    cy.get('#tab-changes .sidebar-list i.fa-spinner').should('not.exist')
+  })
   it('Performs partial page load when clicking on concept', () => {
     // go to the YSO home page in English language
     cy.visit('/yso/en/')
@@ -73,4 +87,27 @@ describe('New and removed view', () => {
     // check that mappings have the right number of properties
     cy.get('.prop-mapping h2').should('have.length', 2)
   })
+  it('Has correct translations', () => {
+    // go to YSO vocab front page in English
+    cy.visit('/yso/en/')
+    // Click on changes tab
+    cy.get('#changes').click()
+    // Check that concepts have correct Aria labels
+    cy.get('#tab-changes').find('.sidebar-list li a').eq(0).should('have.attr', 'aria-label', 'Go to the concept page')
+
+    // go to YSO vocab front page in Finnish
+    cy.visit('/yso/fi/')
+    // Click on changes tab
+    cy.get('#changes').click()
+    // Check that concepts have correct Aria labels
+    cy.get('#tab-changes').find('.sidebar-list li a').eq(0).should('have.attr', 'aria-label', 'Mene käsitesivulle')
+
+    // go to YSO vocab front page in Swedish
+    cy.visit('/yso/sv/')
+    // Click on changes tab
+    cy.get('#changes').click()
+    // Check that concepts have correct Aria labels
+    cy.get('#tab-changes').find('.sidebar-list li a').eq(0).should('have.attr', 'aria-label', 'Gå till begreppssidan')
+
+  })  
 })
